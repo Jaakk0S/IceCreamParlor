@@ -1,0 +1,490 @@
+openapi: "3.0.0"
+info:
+  title: "Ice-cream Parlor: a demo project"
+  version: "1.0"
+
+servers:
+  - url: localhost:1234
+    description: Test endpoint - requires all microservices running
+
+paths:
+
+  /public/v1/place-order/{id}:
+
+    post:
+      summary: Place an order for an existing ice-cream product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Product id
+      responses:
+        '200':
+          description: Order placed
+        '404':
+          description: Product not found
+
+  /public/v1/place-custom-order:
+
+    post:
+      summary: Place an order for a custom ice-cream
+      parameters:
+        - in: query
+          name: cone
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: flavor
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: toppings
+          schema:
+            type: array
+            items:
+              type: integer
+          required: false
+      responses:
+        '200':
+          description: Custom order placed
+        '400':
+          description: Invalid query parameters
+
+  /public/v1/menu-entry:
+
+    get:
+      summary: Return the full menu with all existing products
+      responses:
+        '200':
+          description: The full menu
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+    put:
+      summary: Add a new ice-cream product
+      requestBody:
+        description: The product composition
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        '200':
+          description: The created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /admin/v1/menu-entry/{id}:
+
+    get:
+      summary: Return an existing ice-cream product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Product id
+      responses:
+        '200':
+          description: The product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        '404':
+          description: Product not found
+
+    put:
+      summary: Update an existing ice-cream product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Product id
+      requestBody:
+        description: The product composition
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        '200':
+          description: The updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    delete:
+      summary: Delete given ice-cream product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Product id
+      responses:
+        '200':
+          description: Product deleted
+        '404':
+          description: Product not found
+
+  /admin/v1/cone:
+
+    get:
+      summary: Return all existing cones
+      responses:
+        '200':
+          description: All existing cones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cone"
+
+    put:
+      summary: Add a new cone
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the cone
+      responses:
+        '200':
+          description: The created cone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cone"
+
+  /admin/v1/cone/{id}:
+
+    get:
+      summary: Return an existing cone type
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Cone id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cone"
+        '404':
+          description: Cone not found
+
+    put:
+      summary: Update existing cone type
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Cone id
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the cone
+      responses:
+        '200':
+          description: The updated cone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cone"
+        '404':
+          description: Cone not found
+
+    delete:
+      summary: Delete given cone type
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Cone id
+      responses:
+        '200':
+          description: Cone deleted
+        '404':
+          description: Cone type not found
+
+  /admin/v1/flavor:
+
+    get:
+      summary: Return all flavors
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Flavor"
+
+    put:
+      summary: Add a new flavor
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the flavor
+      responses:
+        '200':
+          description: The created flavor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flavor"
+
+
+  /admin/v1/flavor/{id}:
+
+    get:
+      summary: Return an existing flavor
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Flavor id
+      responses:
+        '200':
+          description: The flavor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flavor"
+        '404':
+          description: Flavor not found
+
+    put:
+      summary: Update existing flavor
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Flavor id
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the flavor
+      responses:
+        '200':
+          description: The updated flavor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flavor"
+        '404':
+          description: Flavor not found
+
+    delete:
+      summary: Delete given flavor
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Flavor id
+      responses:
+        '200':
+          description: Flavor deleted
+        '404':
+          description: Flavor not found
+
+  /admin/v1/topping:
+
+    get:
+      summary: Return all toppings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topping"
+
+    put:
+      summary: Add a new topping
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the topping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topping"
+
+  /admin/v1/topping/{id}:
+
+    get:
+      summary: Return an existing topping
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Topping id
+      responses:
+        '200':
+          description: The topping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topping"
+        '404':
+          description: Topping not found
+
+    put:
+      summary: Update existing topping
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Topping id
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: The name of the topping
+      responses:
+        '200':
+          description: The updated topping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topping"
+        '404':
+          description: Topping not found
+
+    delete:
+      summary: Delete given topping
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Topping id
+      responses:
+        '200':
+          description: Topping deleted
+        '404':
+          description: Topping not found
+
+components:
+  schemas:
+    Cone:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      example:
+        id: 123
+        name: "waffle"
+    Flavor:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      example:
+        id: 123
+        name: "chocolate"
+    Topping:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      example:
+        id: 123
+        name: "chocolate sprinkles"
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        cone:
+          $ref: "#/components/schemas/Cone"
+        flavor:
+          $ref: "#/components/schemas/Flavor"
+        toppings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Topping"
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer-name:
+          type: string
+        status:
+          type: string
+          enum:
+            - placed
+            - in-preparation
+            - in-delivery
+            - delivered
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"

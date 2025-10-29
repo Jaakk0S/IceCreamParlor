@@ -1,0 +1,10 @@
+version: "3"
+services:
+  swagger-ui:
+    image: docker.swagger.io/swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api-specifications:/apifile
+    environment:
+      - SWAGGER_JSON=/apifile/IceCreamParlor.yaml
