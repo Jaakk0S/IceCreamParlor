@@ -14,6 +14,6 @@ This is a showcase demo application that provides a REST API to several microser
 
 ## Requirements
 
+- Java 25
 - Virtualization support (configured in BIOS)
 - Docker
-- NPM

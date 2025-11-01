@@ -68,7 +68,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Product"
 
-    put:
+    post:
       summary: Add a new ice-cream product
       requestBody:
         description: The product composition
@@ -78,7 +78,7 @@ paths:
             schema:
               $ref: "#/components/schemas/Product"
       responses:
-        '200':
+        '201':
           description: The created product
           content:
             application/json:
@@ -106,30 +106,6 @@ paths:
         '404':
           description: Product not found
 
-    put:
-      summary: Update an existing ice-cream product
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: Product id
-      requestBody:
-        description: The product composition
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Product"
-      responses:
-        '200':
-          description: The updated product
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Product"
-
     delete:
       summary: Delete given ice-cream product
       parameters:
@@ -142,7 +118,7 @@ paths:
       responses:
         '200':
           description: Product deleted
-        '404':
+        '204':
           description: Product not found
 
   /admin/v1/cone:
@@ -159,17 +135,17 @@ paths:
                 items:
                   $ref: "#/components/schemas/Cone"
 
-    put:
+    post:
       summary: Add a new cone
-      parameters:
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the cone
+      requestBody:
+        required: true
+        description: Cone, without an ID
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cone"
       responses:
-        '200':
+        '201':
           description: The created cone
           content:
             application/json:
@@ -197,33 +173,8 @@ paths:
         '404':
           description: Cone not found
 
-    put:
-      summary: Update existing cone type
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: Cone id
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the cone
-      responses:
-        '200':
-          description: The updated cone
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Cone"
-        '404':
-          description: Cone not found
-
     delete:
-      summary: Delete given cone type
+      summary: Delete given cone
       parameters:
         - in: path
           name: id
@@ -234,8 +185,10 @@ paths:
       responses:
         '200':
           description: Cone deleted
-        '404':
-          description: Cone type not found
+        '204':
+          description: Cone not found
+        '409':
+          description: Won't delete because cone is referenced in a product
 
   /admin/v1/flavor:
 
@@ -251,17 +204,17 @@ paths:
                 items:
                   $ref: "#/components/schemas/Flavor"
 
-    put:
+    post:
       summary: Add a new flavor
-      parameters:
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the flavor
+      requestBody:
+        required: true
+        description: Flavor, without an ID
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flavor"
       responses:
-        '200':
+        '201':
           description: The created flavor
           content:
             application/json:
@@ -290,31 +243,6 @@ paths:
         '404':
           description: Flavor not found
 
-    put:
-      summary: Update existing flavor
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: Flavor id
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the flavor
-      responses:
-        '200':
-          description: The updated flavor
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Flavor"
-        '404':
-          description: Flavor not found
-
     delete:
       summary: Delete given flavor
       parameters:
@@ -327,8 +255,10 @@ paths:
       responses:
         '200':
           description: Flavor deleted
-        '404':
+        '204':
           description: Flavor not found
+        '409':
+          description: Won't delete because flavor is referenced in a product
 
   /admin/v1/topping:
 
@@ -344,18 +274,18 @@ paths:
                 items:
                   $ref: "#/components/schemas/Topping"
 
-    put:
+    post:
       summary: Add a new topping
-      parameters:
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the topping
+      requestBody:
+        required: true
+        description: Topping, without an ID
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Topping"
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created topping
           content:
             application/json:
               schema:
@@ -382,31 +312,6 @@ paths:
         '404':
           description: Topping not found
 
-    put:
-      summary: Update existing topping
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: Topping id
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: true
-          description: The name of the topping
-      responses:
-        '200':
-          description: The updated topping
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Topping"
-        '404':
-          description: Topping not found
-
     delete:
       summary: Delete given topping
       parameters:
@@ -419,13 +324,17 @@ paths:
       responses:
         '200':
           description: Topping deleted
-        '404':
+        '204':
           description: Topping not found
+        '409':
+          description: Won't delete because topping is referenced in a product
 
 components:
   schemas:
     Cone:
       type: object
+      required:
+        - name
       properties:
         id:
           type: integer
@@ -436,6 +345,8 @@ components:
         name: "waffle"
     Flavor:
       type: object
+      required:
+        - name
       properties:
         id:
           type: integer
@@ -446,6 +357,8 @@ components:
         name: "chocolate"
     Topping:
       type: object
+      required:
+        - name
       properties:
         id:
           type: integer
@@ -456,6 +369,10 @@ components:
         name: "chocolate sprinkles"
     Product:
       type: object
+      required:
+        - name
+        - cone
+        - flavor
       properties:
         id:
           type: integer
@@ -484,7 +401,7 @@ components:
             - in-preparation
             - in-delivery
             - delivered
-        content:
+        products:
           type: array
           items:
             $ref: "#/components/schemas/Product"
