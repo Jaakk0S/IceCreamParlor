@@ -1,0 +1,84 @@
+openapi: "3.0.0"
+info:
+  title: "Ice-cream Parlor: Order API"
+  version: "1.0"
+
+servers:
+  - url: localhost
+    description: Local endpoint
+
+paths:
+
+  /order/v1/healthcheck:
+    get:
+      responses:
+        '200':
+          description: This is always returned
+
+  /order/v1/status/{id}:
+    get:
+      parameters:
+        - in: header
+          name: Connection
+          schema:
+            type: string
+          description: keep-alive
+          required: false
+      responses:
+        '200':
+          description: Order, if found
+          headers:
+            Connection:
+              schema:
+                type: string
+              description: Value will be 'keep-alive', if the request contained the same header
+        '404':
+          description: If order not found
+
+  /order/v1/place:
+
+    post:
+      summary: Place an order for ice-cream products
+      requestBody:
+        description: An Order object with only the required fields, the rest are ignored
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        '200':
+          description: A fully populated Order object with ID for tracking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        '400':
+          description: Malformed request
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer-name:
+          type: string
+        status:
+          type: string
+          enum:
+            - placed
+            - in_preparation
+            - in_delivery
+            - delivered
+        products:
+          description: Products can be either simply ids (existing products), or full product objects with component object ids
+          type: array
+          items:
+            oneOf:
+              - type: integer # product id
+              - $ref: "MenuAPI.yaml#/components/schemas/Product"
+      required:
+        - customer_name
+        - products

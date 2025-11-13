@@ -1,60 +1,21 @@
 openapi: "3.0.0"
 info:
-  title: "Ice-cream Parlor: a demo project"
+  title: "Ice-cream Parlor: Menu API"
   version: "1.0"
 
 servers:
-  - url: localhost:1234
-    description: Test endpoint - requires all microservices running
+  - url: localhost
+    description: Local endpoint
 
 paths:
 
-  /public/v1/place-order/{id}:
-
-    post:
-      summary: Place an order for an existing ice-cream product
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: Product id
+  /admin/v1/healthcheck:
+    get:
       responses:
         '200':
-          description: Order placed
-        '404':
-          description: Product not found
+          description: This is always returned
 
-  /public/v1/place-custom-order:
-
-    post:
-      summary: Place an order for a custom ice-cream
-      parameters:
-        - in: query
-          name: cone
-          schema:
-            type: integer
-          required: true
-        - in: query
-          name: flavor
-          schema:
-            type: integer
-          required: true
-        - in: query
-          name: toppings
-          schema:
-            type: array
-            items:
-              type: integer
-          required: false
-      responses:
-        '200':
-          description: Custom order placed
-        '400':
-          description: Invalid query parameters
-
-  /public/v1/menu-entry:
+  /admin/v1/product:
 
     get:
       summary: Return the full menu with all existing products
@@ -85,7 +46,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Product"
 
-  /admin/v1/menu-entry/{id}:
+  /admin/v1/product/{id}:
 
     get:
       summary: Return an existing ice-cream product
@@ -386,22 +347,3 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Topping"
-
-    Order:
-      type: object
-      properties:
-        id:
-          type: integer
-        customer-name:
-          type: string
-        status:
-          type: string
-          enum:
-            - placed
-            - in-preparation
-            - in-delivery
-            - delivered
-        products:
-          type: array
-          items:
-            $ref: "#/components/schemas/Product"

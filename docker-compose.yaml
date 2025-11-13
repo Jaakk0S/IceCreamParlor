@@ -1,10 +1,61 @@
 version: "3"
+
 services:
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"   # broker
+      - "15672:15672" # management console
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - ./rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq-config/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq-config/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq-data/:/var/lib/rabbitmq/mnesia/
+
   swagger-ui:
     image: docker.swagger.io/swaggerapi/swagger-ui
+    container_name: swagger-ui
     ports:
-      - "8080:8080"
+      - "8084:8080"
     volumes:
       - ./api-specifications:/apifile
     environment:
-      - SWAGGER_JSON=/apifile/IceCreamParlor.yaml
+      - SWAGGER_JSON=/apifile/MenuAPI.yaml
+
+  mysql:
+    image: mysql:9.5.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+
+
+  nginx:
+    image: nginx:stable-perl
+
+  IceCreamParlor-MenuService:
+    image: icecreamparlor-menuservice
+    ports:
+      - "8080:8080"
+
+  IceCreamParlor-OrderService:
+
+  IceCreamParlor-PreparationAgent:
+    environment:
+      - rabbitmq_username=admin
+      - rabbitmq_password=password
+
+  IceCreamParlor-DeliveryAgent:
+    environment:
+      - rabbitmq_username=admin
+      - rabbitmq_password=password
+
+
+
+  IceCreamParlor-UI:
+

@@ -1,0 +1,101 @@
+#/bin/sh
+set -e -x
+
+if ! docker ps >/dev/null; then
+    echo "[XXX] Docker service not running. Start Docker Desktop?"
+    exit 1
+fi
+
+build_dir=microservices
+build_image_name=icecreamparlor-build
+work_dir=/microservices
+
+
+echo " [x] Cleaning the microservice build directory"
+
+rm -rf $build_dir
+mkdir -p $build_dir
+
+
+echo " [x] Removing the existing build image"
+
+docker stop $build_image_name || true
+docker rm $build_image_name || true
+
+
+echo " [x] Building a build image"
+
+docker build -t $build_image_name .
+
+
+echo " [x] Starting the build image"
+
+docker run --name $build_image_name -d -i -t --mount type=bind,source=./$build_dir,target=$work_dir $build_image_name
+
+
+echo " [x] Removing the existing microservice containers and images"
+
+remove_image() {
+    image="$1"
+    docker stop $image 2>/dev/null || true
+    docker rm $image 2>/dev/null || true
+}
+
+remove_image icecreamparlor-processing
+remove_image icecreamparlor-menuservice
+remove_image icecreamparlor-orderservice
+
+
+echo " [x] Pulling microservice repositories from Github to build directory"
+
+docker exec $build_image_name sh //scripts/pull_repositories.sh
+
+
+echo " [x] Restarting the build image to enforce filesystem updates"
+
+docker restart $build_image_name
+
+
+echo " [x] Starting mysql"
+
+docker stop mysql_test || true
+docker rm mysql_test || true
+docker run --name mysql_test --rm -e MYSQL_ROOT_PASSWORD=ThisDBExistsOnlyDuringTest -d mysql:9.5.0
+until docker exec mysql_test mysqladmin ping -pThisDBExistsOnlyDuringTest 2>/dev/null | grep "mysqld is alive"; do
+  >&2 echo "Waiting for mysqld..."
+  sleep 1
+done
+docker exec mysql_test mysql -u root -pThisDBExistsOnlyDuringTest --protocol=tcp -e "drop database if exists test; create database test;"
+
+
+echo " [x] Creating a virtual network for mysql access"
+
+docker network rm virt_mysql || true
+docker network create virt_mysql
+docker network connect virt_mysql mysql_test
+mysql_ip=$(docker network inspect virt_mysql|grep IPv4Address|cut -d \" -f 4|cut -d '/' -f 1)
+docker network connect virt_mysql $build_image_name
+
+
+echo " [x] Building microservice code"
+
+docker exec --env mysql_host=$mysql_ip $build_image_name sh //scripts/build_orderservice.sh
+docker exec $build_image_name sh //scripts/build_menuservice.sh
+
+
+echo " [x] Stopping containers"
+
+docker stop mysql_test || true
+docker stop icecreamparlor-build || true
+
+
+echo " [x] Dropping the virtual network"
+
+docker network rm virt_mysql
+
+
+echo " [x] Containerizing microservices"
+
+docker build -t icecreamparlor-processing $build_dir/IceCreamParlor-Processing/Dockerfile
+docker build -t icecreamparlor-orderservice $build_dir/IceCreamParlor-OrderService/Dockerfile
+docker build -t icecreamparlor-menuservice $build_dir/IceCreamParlor-MenuService/Dockerfile
