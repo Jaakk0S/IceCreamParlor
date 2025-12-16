@@ -9,11 +9,18 @@
   "users": [
     {
       "name": "admin",
-      "password_hash": "0mWcNJXaYFiZ5PUoqG1px1Yhgs0gRNv4nT/ZdEta8u8o5Ohv",
+      "password_hash": "ADMINPASSHASH",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": [
         "administrator"
       ],
+      "limits": {}
+    },
+    {
+      "name": "RabbitUser",
+      "password_hash": "USERPASSHASH",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
       "limits": {}
     }
   ],
@@ -36,6 +43,13 @@
       "configure": ".*",
       "write": ".*",
       "read": ".*"
+    },
+    {
+      "user": "RabbitUser",
+      "vhost": "/",
+      "configure": "",
+      "write": ".*",
+      "read": ".*"
     }
   ],
   "topic_permissions": [],
@@ -55,17 +69,26 @@
     {
       "name": "placed_orders",
       "vhost": "/",
-      "durable": false,
+      "durable": true,
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "classic"
       }
     },
     {
-      "name": "jormakka",
+      "name": "prepared_orders",
       "vhost": "/",
-      "durable": false,
-      "auto_delete": true,
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "order_status",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-queue-type": "classic"
       }

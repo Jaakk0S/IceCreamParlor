@@ -4,8 +4,7 @@ info:
   version: "1.0"
 
 servers:
-  - url: localhost
-    description: Local endpoint
+  - url: icecreamparlor-orderservice:8080
 
 paths:
 
@@ -17,6 +16,14 @@ paths:
 
   /order/v1/status/{id}:
     get:
+      responses:
+        '200':
+          description: Order, if found
+        '404':
+          description: If order not found
+
+  /order/v1/stream:
+    get:
       parameters:
         - in: header
           name: Connection
@@ -26,14 +33,12 @@ paths:
           required: false
       responses:
         '200':
-          description: Order, if found
+          description: All data of all orders
           headers:
             Connection:
               schema:
                 type: string
-              description: Value will be 'keep-alive', if the request contained the same header
-        '404':
-          description: If order not found
+              description: Value will be 'keep-alive', if the request contained the same header. The server will then keep sending all order data on each order update.
 
   /order/v1/place:
 

@@ -4,18 +4,17 @@ info:
   version: "1.0"
 
 servers:
-  - url: localhost
-    description: Local endpoint
+  - url: http://icecreamparlor-menuservice:8080
 
 paths:
 
-  /admin/v1/healthcheck:
+  /menu/v1/healthcheck:
     get:
       responses:
         '200':
           description: This is always returned
 
-  /admin/v1/product:
+  /menu/v1/products:
 
     get:
       summary: Return the full menu with all existing products
@@ -46,7 +45,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Product"
 
-  /admin/v1/product/{id}:
+  /menu/v1/product/{id}:
 
     get:
       summary: Return an existing ice-cream product
@@ -82,7 +81,7 @@ paths:
         '204':
           description: Product not found
 
-  /admin/v1/cone:
+  /menu/v1/cone:
 
     get:
       summary: Return all existing cones
@@ -113,7 +112,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Cone"
 
-  /admin/v1/cone/{id}:
+  /menu/v1/cone/{id}:
 
     get:
       summary: Return an existing cone type
@@ -151,7 +150,7 @@ paths:
         '409':
           description: Won't delete because cone is referenced in a product
 
-  /admin/v1/flavor:
+  /menu/v1/flavor:
 
     get:
       summary: Return all flavors
@@ -183,7 +182,7 @@ paths:
                 $ref: "#/components/schemas/Flavor"
 
 
-  /admin/v1/flavor/{id}:
+  /menu/v1/flavor/{id}:
 
     get:
       summary: Return an existing flavor
@@ -221,7 +220,7 @@ paths:
         '409':
           description: Won't delete because flavor is referenced in a product
 
-  /admin/v1/topping:
+  /menu/v1/topping:
 
     get:
       summary: Return all toppings
@@ -252,7 +251,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Topping"
 
-  /admin/v1/topping/{id}:
+  /menu/v1/topping/{id}:
 
     get:
       summary: Return an existing topping

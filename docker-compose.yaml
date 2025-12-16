@@ -1,61 +1,152 @@
-version: "3"
-
 services:
 
   rabbitmq:
-    image: rabbitmq:latest
     container_name: rabbitmq
+    build:
+      dockerfile: ./rabbitmq/Dockerfile-rabbitmq
+      args:
+        - PASS=${RABBITMQ_USER_PASSWORD}
+        - ADMINPASS=${RABBITMQ_ADMIN_PASSWORD}
     restart: always
     ports:
       - "5672:5672"   # broker
       - "15672:15672" # management console
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - proxyNet
     volumes:
-      - ./rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./rabbitmq-config/definitions.json:/etc/rabbitmq/definitions.json
-      - ./rabbitmq-config/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./rabbitmq-data/:/var/lib/rabbitmq/mnesia/
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - data:/rabbitmq/:/var/lib/rabbitmq/mnesia/
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 10s
+      retries: 30
 
   swagger-ui:
     image: docker.swagger.io/swaggerapi/swagger-ui
     container_name: swagger-ui
-    ports:
-      - "8084:8080"
     volumes:
       - ./api-specifications:/apifile
     environment:
       - SWAGGER_JSON=/apifile/MenuAPI.yaml
+    networks:
+      - proxyNet
 
   mysql:
     image: mysql:9.5.0
     container_name: mysql
+    environment:
+      - MYSQL_DATABASE=icecream_order
+      - MYSQL_USER=OrderUser
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
-
+    networks:
+      - proxyNet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1s
+      timeout: 10s
+      retries: 30
 
   nginx:
-    image: nginx:stable-perl
-
-  IceCreamParlor-MenuService:
-    image: icecreamparlor-menuservice
+    image: nginx:latest
+    container_name: nginx
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - data:/nginx/logs:/var/log/nginx
+    networks:
+      - proxyNet
+    depends_on:
+      ui:
+        condition: service_healthy
+      swagger-ui:
+        condition: service_healthy
 
-  IceCreamParlor-OrderService:
+  menu-service:
+    image: icecreamparlor-menuservice:latest
+    container_name: menu-service
+    ports:
+      - "8081:8080"
+    networks:
+      - proxyNet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/menu/v1/healthcheck"]
+      timeout: 20s
+      retries: 10
 
-  IceCreamParlor-PreparationAgent:
+  order-service:
+    image: icecreamparlor-orderservice:latest
+    container_name: order-service
+    networks:
+      - proxyNet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/order/v1/healthcheck"]
+      timeout: 20s
+      retries: 10
     environment:
-      - rabbitmq_username=admin
-      - rabbitmq_password=password
+      - mysql_database=icecream_order
+      - mysql_user=OrderUser
+      - mysql_password=${MYSQL_PASSWORD}
+      - rabbitmq_user=RabbitUser
+      - rabbitmq_password=${RABBITMQ_USER_PASSWORD}
 
-  IceCreamParlor-DeliveryAgent:
+  preparation-agent:
+    image: icecreamparlor-processing:latest
     environment:
-      - rabbitmq_username=admin
-      - rabbitmq_password=password
+      - processing_profile=preparation
+    volumes:
+      - ./processing/.env:/.env
+    networks:
+      - proxyNet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  delivery-agent:
+    image: icecreamparlor-processing:latest
+    environment:
+      - processing_profile=delivery
+    volumes:
+      - ./processing/.env:/.env
+    networks:
+      - proxyNet
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  ui:
+    image: icecreamparlor-ui:latest
+    container_name: ui
+    ports:
+      - "3034:3000"
+    networks:
+      - proxyNet
+    depends_on:
+      menu-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+
+  nettools:
+    image: wbitt/network-multitool:latest
+    networks:
+      - proxyNet
 
 
+networks:
+  proxyNet:
 
-  IceCreamParlor-UI:
 
+volumes:
+  data:
