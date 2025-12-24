@@ -24,21 +24,9 @@ paths:
 
   /order/v1/stream:
     get:
-      parameters:
-        - in: header
-          name: Connection
-          schema:
-            type: string
-          description: keep-alive
-          required: false
       responses:
         '200':
-          description: All data of all orders
-          headers:
-            Connection:
-              schema:
-                type: string
-              description: Value will be 'keep-alive', if the request contained the same header. The server will then keep sending all order data on each order update.
+          description: This is a long-polling method that will block until the status of any order is updated. It will then return the data of all orders.
 
   /order/v1/place:
 

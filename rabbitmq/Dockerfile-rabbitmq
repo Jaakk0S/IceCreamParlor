@@ -7,7 +7,7 @@ ARG ADMINPASS
 
 RUN rabbitmqctl -q hash_password ${PASS} >.userpasshash.txt
 RUN rabbitmqctl -q hash_password ${ADMINPASS} >.adminpasshash.txt
-RUN sed -i -e "s/USERPASSHASH/$(cat .userpasshash.txt)/" -e "s/ADMINPASSHASH/$(cat .adminpasshash.txt)/" /etc/rabbitmq/definitions.json
+RUN sed -i -e "s#USERPASSHASH#$(cat .userpasshash.txt)#" -e "s#ADMINPASSHASH#$(cat .adminpasshash.txt)#" /etc/rabbitmq/definitions.json
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["rabbitmq-server"]

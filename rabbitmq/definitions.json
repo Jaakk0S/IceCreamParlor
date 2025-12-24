@@ -94,6 +94,59 @@
       }
     }
   ],
-  "exchanges": [],
-  "bindings": []
+  "exchanges": [
+    {
+      "name": "order_status_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "placed_orders_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "prepared_orders_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "prepared_orders_exchange",
+      "vhost": "/",
+      "destination": "prepared_orders",
+      "destination_type": "queue",
+      "routing_key": "prepared_orders",
+      "arguments": {}
+    },
+    {
+      "source": "placed_orders_exchange",
+      "vhost": "/",
+      "destination": "placed_orders",
+      "destination_type": "queue",
+      "routing_key": "placed_orders",
+      "arguments": {}
+    },
+    {
+      "source": "order_status_exchange",
+      "vhost": "/",
+      "destination": "order_status",
+      "destination_type": "queue",
+      "routing_key": "order_status",
+      "arguments": {}
+    }
+  ]
 }

@@ -5,10 +5,12 @@ Jaakko Saaristo 2025
 Ice-cream Parlor is a demo business application and a microservice technology showcase.
 The application is composed of a frontend and an event-based backend of several _scalable_ microservices that are all built with different technologies.
 
-## Technologies featured:
+## Technical Aspects
+
+### Technologies featured:
 
 1. OpenAPI specification
-2. Docker
+2. Docker, Docker Compose
 3. React
 4. Nginx
 5. Spring Boot, Spring Web, Spring JPA
@@ -20,6 +22,13 @@ The application is composed of a frontend and an event-based backend of several 
 ### Architecture
 
 ![Architecture](./resources/icecreamparlor-architecture.png)
+
+### API Specification
+
+The app uses an internal API that implements an OpenAPI specification. The API is blocked from external network traffic, but 
+the API specification can be browsed and tested through the Swagger page that is public.
+
+You can access the Swagger *from the link in the pager footer*.
 
 ### Security
 
@@ -35,6 +44,8 @@ Obviously, SSL is missing.
 
 ## Requirements
 
+To run Ice-cream Parlor on your local machine, you need the following.
+
 - Linux-like environment (Linux, Mac or Windows with e.g. Git Bash)
 - Docker
 - Docker Desktop is running
@@ -44,7 +55,7 @@ Docker Desktop installation will prompt you to this.
 
 ## Building
 
-Run
+To build the app, run
 
 ```
 sh build-microservices
@@ -54,15 +65,18 @@ The build script will pull all custom built microservices from my Github and bui
 
 ## Configuring
 
-You need to provide a couple of passwords. You can use any arbitrary values for the passwords, as this is a demo application. They will be
-baked into the services and used to authenticate inter-service communication.
+Before running the app, you need to provide a couple of passwords. You can use any arbitrary values for the passwords, as this is a demo application.
+The passwords will be baked into the services and used to authenticate inter-service communication.
 
-Create a copy of the `.env.template` file, rename it to `.env` and make sure it is in the same directory as the template.
-Now edit this file and fill in the blanks.
+1. Create a copy of the `.env.template` file, in the same directory as the template
+2. Rename the file to `.env` ("dot env", notice the filename starts with a dot)
+3. Edit the `.env` file and fill in the blanks
 
 ## Running and stopping
 
-Run
+### Running
+
+To start the app, run
 
 ```
 docker compose up
@@ -72,3 +86,13 @@ This will run all microservices in Docker Desktop using configuration in `docker
 
 The full service composition contains the custom microservices built in the previous step, and
 some publicly available service images.
+
+### Stopping
+
+Go to Docker Desktop. Click on the tab "Containers". Click the stop button on the top level service "icecreamparlor".
+
+## Using the App
+
+Direct your chosen browser to http://localhost.
+
+Note: The service doesn't use SSL at the moment, so it's up to your browser if this is OK or not. 

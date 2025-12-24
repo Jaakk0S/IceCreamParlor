@@ -19,19 +19,9 @@ services:
       - data:/rabbitmq/:/var/lib/rabbitmq/mnesia/
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
-      interval: 1s
+      interval: 3s
       timeout: 10s
-      retries: 30
-
-  swagger-ui:
-    image: docker.swagger.io/swaggerapi/swagger-ui
-    container_name: swagger-ui
-    volumes:
-      - ./api-specifications:/apifile
-    environment:
-      - SWAGGER_JSON=/apifile/MenuAPI.yaml
-    networks:
-      - proxyNet
+      retries: 20
 
   mysql:
     image: mysql:9.5.0
@@ -47,9 +37,9 @@ services:
       - proxyNet
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 1s
+      interval: 3s
       timeout: 10s
-      retries: 30
+      retries: 20
 
   nginx:
     image: nginx:latest
@@ -62,10 +52,21 @@ services:
       - data:/nginx/logs:/var/log/nginx
     networks:
       - proxyNet
+    healthcheck:
+      test: ['CMD', '/bin/healthcheck.sh']
+      interval: 3s
+      timeout: 10s
+      retries: 20
     depends_on:
       ui:
         condition: service_healthy
-      swagger-ui:
+      menu-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      swagger-menuapi:
+        condition: service_healthy
+      swagger-orderapi:
         condition: service_healthy
 
   menu-service:
@@ -76,9 +77,10 @@ services:
     networks:
       - proxyNet
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/menu/v1/healthcheck"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/menu/v1/healthcheck"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
 
   order-service:
     image: icecreamparlor-orderservice:latest
@@ -91,9 +93,10 @@ services:
       mysql:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/order/v1/healthcheck"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/order/v1/healthcheck"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
     environment:
       - mysql_database=icecream_order
       - mysql_user=OrderUser
@@ -105,8 +108,10 @@ services:
     image: icecreamparlor-processing:latest
     environment:
       - processing_profile=preparation
-    volumes:
-      - ./processing/.env:/.env
+      - rabbitmq_host=rabbitmq
+      - rabbitmq_port=5672
+      - rabbitmq_username=RabbitUser
+      - rabbitmq_password=${RABBITMQ_USER_PASSWORD}
     networks:
       - proxyNet
     depends_on:
@@ -117,8 +122,10 @@ services:
     image: icecreamparlor-processing:latest
     environment:
       - processing_profile=delivery
-    volumes:
-      - ./processing/.env:/.env
+      - rabbitmq_host=rabbitmq
+      - rabbitmq_port=5672
+      - rabbitmq_username=RabbitUser
+      - rabbitmq_password=${RABBITMQ_USER_PASSWORD}
     networks:
       - proxyNet
     depends_on:
@@ -132,21 +139,52 @@ services:
       - "3034:3000"
     networks:
       - proxyNet
-    depends_on:
-      menu-service:
-        condition: service_healthy
-      order-service:
-        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
 
+  swagger-menuapi:
+    image: docker.swagger.io/swaggerapi/swagger-ui
+    container_name: swagger-menuapi
+    volumes:
+      - ./api-specifications:/apifile
+    environment:
+      - SWAGGER_JSON=/apifile/MenuAPI.yaml
+    networks:
+      - proxyNet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
+
+  swagger-orderapi:
+    image: docker.swagger.io/swaggerapi/swagger-ui
+    container_name: swagger-orderapi
+    volumes:
+      - ./api-specifications:/apifile
+    environment:
+      - SWAGGER_JSON=/apifile/OrderAPI.yaml
+    networks:
+      - proxyNet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
+
+  # This container has network tools. It can be brought up by running the 'debug' profile
   nettools:
     image: wbitt/network-multitool:latest
     networks:
       - proxyNet
+    profiles: ["debug"]
 
 
 networks:
   proxyNet:
-
 
 volumes:
   data:
