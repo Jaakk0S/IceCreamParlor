@@ -16,6 +16,13 @@ paths:
 
   /order/v1/status/{id}:
     get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Order id
       responses:
         '200':
           description: Order, if found

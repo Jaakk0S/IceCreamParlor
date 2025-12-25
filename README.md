@@ -25,8 +25,9 @@ The application is composed of a frontend and an event-based backend of several 
 
 ### API Specification
 
-The app uses an internal API that implements an OpenAPI specification. The API is blocked from external network traffic, but 
-the API specification can be browsed and tested through the Swagger page that is public.
+The app implements two internal APIs. The APIs are blocked from external network traffic, but 
+the OpenAPI specifications can be browsed and tested through the Swagger pages.
+The Swagger pages are public for demo purposes.
 
 You can access the Swagger *from the links in the page footer*.
 
@@ -58,6 +59,7 @@ and the build framework will handle the rest.
 
 To run Ice-cream Parlor on your local machine, you need the following.
 
+- Internet connection (once services are built into Docker repository, its not anymore needed)
 - Linux-like environment (Linux, Mac or Windows with e.g. Git Bash)
 - Docker
 - Docker Desktop is running
@@ -105,4 +107,5 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 
 Direct your chosen browser to http://localhost.
 
-Note: The service doesn't use SSL at the moment, so it's up to your browser if this is OK or not. 
+Note: The service doesn't use SSL at the moment, so it's up to your browser if this is OK or not.
+
