@@ -28,7 +28,7 @@ The application is composed of a frontend and an event-based backend of several 
 The app uses an internal API that implements an OpenAPI specification. The API is blocked from external network traffic, but 
 the API specification can be browsed and tested through the Swagger page that is public.
 
-You can access the Swagger *from the link in the pager footer*.
+You can access the Swagger *from the links in the page footer*.
 
 ### Security
 

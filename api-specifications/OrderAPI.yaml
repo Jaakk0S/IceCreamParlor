@@ -4,7 +4,7 @@ info:
   version: "1.0"
 
 servers:
-  - url: icecreamparlor-orderservice:8080
+  - url: http://localhost
 
 paths:
 
