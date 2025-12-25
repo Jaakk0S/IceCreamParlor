@@ -42,6 +42,18 @@ RabbitMQ and MySQL use password authentication.
 Obviously, SSL is missing.
 
 
+## Project Structure
+
+This repository is an *aggregator* project of the following microservice repositories:
+- IceCreamParlor
+- IceCreamParlor-MenuService
+- IceCreamParlor-OrderService
+- IceCreamParlor-Processing
+- icecreamparlor-ui
+
+To run Icecream-parlor locally you only need to pull this repository
+and the build framework will handle the rest.
+
 ## Requirements
 
 To run Ice-cream Parlor on your local machine, you need the following.
@@ -55,13 +67,11 @@ Docker Desktop installation will prompt you to this.
 
 ## Building
 
-To build the app, run
-
-```
-sh build-microservices
-```
-
 The build script will pull all custom built microservices from my Github and build them into Docker images in the local Docker repository.
+
+To build the app,
+1. On Linux, run `./build-microservices`
+2. On Windows/Git Bash, run `sh build-microservices`
 
 ## Configuring
 
