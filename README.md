@@ -33,10 +33,10 @@ You can access the Swagger *from the links in the page footer*.
 
 ### Security
 
-Inter-service communication is implemented over RabbitMQ and plain HTTP (no SSL). Public access is only allowed
-through a HTTP reverse proxy (Nginx).
+Inter-service communication is implemented over RabbitMQ and HTTPS with SSL using a self-signed certificate.
+Public access is only allowed through a HTTPS reverse proxy (Nginx).
 
-HTTP endpoints implement CORS policy.   
+HTTPS endpoints implement CORS policy.   
 
 RabbitMQ and MySQL use password authentication.
 
@@ -77,12 +77,29 @@ To build the app,
 
 ## Configuring
 
+### Configuring Passwords
+
 Before running the app, you need to provide a couple of passwords. You can use any arbitrary values for the passwords, as this is a demo application.
 The passwords will be baked into the services and used to authenticate inter-service communication.
 
 1. Create a copy of the `.env.template` file, in the same directory as the template
 2. Rename the file to `.env` ("dot env", notice the filename starts with a dot)
 3. Edit the `.env` file and fill in the blanks
+
+### SSL or not?
+
+You can choose to use SSL or to use plain HTTP. The default is to use SSL.
+
+Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
+Your browser will call it unsafe, unless you teach it not to (which is not covered here).
+
+To *switch off SSL*, edit this line in *docker-compose.yaml*:
+```
+nginx:
+    volumes:
+    - ./nginx/conf/nginx_ssl.conf:/etc/nginx/nginx.conf
+```
+Change the filename `nginx_ssl.conf` to `nginx.conf`. The app will now use plain HTTP in all communications.
 
 ## Running and stopping
 
