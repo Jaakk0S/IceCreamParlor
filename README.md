@@ -19,7 +19,7 @@ The application is composed of a frontend and an event-based backend of several 
 8. RabbitMQ
 9. PostgreSQL
 
-### Architecture
+### §hitecture
 
 ![Architecture](./resources/icecreamparlor-architecture.png)
 
@@ -39,9 +39,6 @@ Public access is only allowed through a HTTPS reverse proxy (Nginx).
 HTTPS endpoints implement CORS policy.   
 
 RabbitMQ and MySQL use password authentication.
-
-Obviously, SSL is missing.
-
 
 ## Project Structure
 
@@ -91,7 +88,7 @@ The passwords will be baked into the services and used to authenticate inter-ser
 You can choose to use SSL or to use plain HTTP. The default is to use SSL.
 
 Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
-Your browser will call it unsafe, unless you teach it not to (which is not covered here).
+Your browser will call it unsafe, unless you teach it not to (which is not covered here). ![Architecture](./resources/not-secure.png)
 
 To *switch off SSL*, edit this line in *docker-compose.yaml*:
 ```
