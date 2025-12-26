@@ -88,9 +88,10 @@ The passwords will be baked into the services and used to authenticate inter-ser
 You can choose to use SSL or to use plain HTTP. The default is to use SSL.
 
 Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
-Your browser will call it unsafe, unless you teach it not to (which is not covered here). ![Architecture](./resources/not-secure.png)
+Your browser will call it unsafe, unless you teach it not to (which is not covered here).
+This is just a cosmetic problem: ![Architecture](./resources/not-secure.png)
 
-To *switch off SSL*, edit this line in *docker-compose.yaml*:
+If you want to *switch off SSL*, edit this line in *docker-compose.yaml*:
 ```
 nginx:
     volumes:
