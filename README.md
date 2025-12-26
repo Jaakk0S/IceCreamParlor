@@ -93,7 +93,7 @@ This is just a cosmetic problem:
 
 ![Architecture](./resources/not-secure.png)
 
-If you want to *switch off SSL*, edit this line in *docker-compose.yaml*:
+If you want to *switch off SSL* altogether, edit this line in *docker-compose.yaml*:
 ```
 nginx:
     volumes:
@@ -111,7 +111,7 @@ To start the app, run
 docker compose up
 ```
 
-This will run all microservices in Docker Desktop using configuration in `docker-compose.yaml`, and aggregate all log output into a single stream.
+This will run all microservices in Docker Desktop using configuration in `docker-compose.yaml`, and aggregate all log output to console.
 
 The full service composition contains the custom microservices built in the previous step, and
 some publicly available service images.
