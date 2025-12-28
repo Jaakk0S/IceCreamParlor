@@ -138,6 +138,3 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 ## Using the App
 
 Direct your chosen browser to http://localhost.
-
-Note: The service doesn't use SSL at the moment, so it's up to your browser if this is OK or not.
-
