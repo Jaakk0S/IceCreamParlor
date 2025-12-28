@@ -66,8 +66,6 @@ They can be exposed by un-commenting a few lines in *docker-compose.yaml*
 Inter-service communication is implemented over RabbitMQ and HTTPS with SSL using a self-signed certificate.
 Public access is only allowed through a HTTP(s) reverse proxy (Nginx).
 
-HTTP endpoints implement CORS policy and will also only serve requests originating from the web proxy.
-
 There is no user management. RabbitMQ and MySQL use password authentication.
 
 Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.

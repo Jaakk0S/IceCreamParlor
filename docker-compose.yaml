@@ -48,7 +48,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # This maps in the SSL supporting config file. To use plain HTTP, one would also have to update internal Javascript HTTPS calls to use HTTP
+      # This maps in the SSL supporting config file. To use plain HTTP  (with nginx_no_ssl.conf), one would also have to update internal Javascript HTTPS calls to use HTTP
       - ./nginx/conf/nginx_ssl.conf:/etc/nginx/nginx.conf
       - ./nginx/conf:/etc/nginx
       - ./nginx/cert:/etc/nginx/cert
