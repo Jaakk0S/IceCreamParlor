@@ -85,6 +85,8 @@ This repository is an *aggregator* project of the following microservice reposit
 
 To run Icecream-parlor locally you only need to pull this repository.
 
+In this composition, the app is set up to run locally in a single host machine.
+
 ## Requirements
 
 To run Ice-cream Parlor on your local machine, you need the following.
