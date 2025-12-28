@@ -3,7 +3,26 @@
 Jaakko Saaristo 2025
 
 Ice-cream Parlor is a demo business application and a microservice technology showcase.
-The application is composed of a frontend and an event-based backend of several _scalable_ microservices that are all built with different technologies.
+The application is composed of a frontend and an event-based backend of containerized scalable microservices.
+The microservices are each built with different technologies.
+
+## Overview
+
+Ice-cream Parlor provides a backend and a simple UI to buy, process and deliver ice-cream.
+
+You use the UI to create ice-cream orders. You can add existing "classic" ice-cream products to your order,
+or you can create custom orders where you select the ice-cream composition. This data is served by the Menu
+service.
+
+Once you have created your order, click "Place Order". The order will be placed in the queue for placed orders.
+It will then be picked up by a preparation agent and then placed in the queue for prepared orders.
+It will then be picked up by a delivery agent and delivered. At each processing step, the order
+status is updated using the order status queue. These status updates are listened to by the Order service,
+which will update the order status in its internal database, and push the status updates to the UI.
+The UI will display the progress of each order to the user.
+
+The Menu service is serving built-in menu items from its database. The API also provides administration functions
+to add and delete menu items. There is no UI functionality to support these features.
 
 ## Technical Aspects
 
@@ -12,33 +31,50 @@ The application is composed of a frontend and an event-based backend of several 
 1. OpenAPI specification
 2. Docker, Docker Compose
 3. React
-4. Nginx
-5. Spring Boot, Spring Web, Spring JPA
-6. Node.JS
-7. Python
-8. RabbitMQ
-9. PostgreSQL
+4. Spring Boot, Spring Web, Spring JPA
+5. Node.JS
+6. Python
+7. RabbitMQ
+8. PostgreSQL
+9. Nginx
 
-### §hitecture
+### Architecture
 
 ![Architecture](./resources/icecreamparlor-architecture.png)
 
 ### API Specification
 
-The app implements two internal APIs. The APIs are blocked from external network traffic, but 
-the OpenAPI specifications can be browsed and tested through the Swagger pages.
-The Swagger pages are public for demo purposes.
+Menu operations utilize the Menu service over Menu API. Order operations utilize the Order service over Order API.
 
-You can access the Swagger *from the links in the page footer*.
+When running the app, the APIs are blocked from external network traffic, but 
+the OpenAPI specifications can be browsed and tested through the Swagger pages.
+The Swagger pages are made public for demo purposes.
+
+You can access the Swagger *from the links in the page footer*. The API served by the Swagger pages is generated from
+the specifications in this repository under *api-specifications/*.
+
+### Scalability
+
+In this setup, all services are set up to be served by a single microservice. The architecture supports horizontal scaling of
+service nodes, using e.g. Kubernetes.
 
 ### Security
 
+The services run inside a Docker virtual network. The service ports are not exposed to the outside world.
+They can be exposed by un-commenting a few lines in *docker-compose.yaml*
+
 Inter-service communication is implemented over RabbitMQ and HTTPS with SSL using a self-signed certificate.
-Public access is only allowed through a HTTPS reverse proxy (Nginx).
+Public access is only allowed through a HTTP(s) reverse proxy (Nginx).
 
-HTTPS endpoints implement CORS policy.   
+HTTP endpoints implement CORS policy and will also only serve requests originating from the web proxy.
 
-RabbitMQ and MySQL use password authentication.
+There is no user management. RabbitMQ and MySQL use password authentication.
+
+Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
+Your browser will call it unsafe, unless you teach it not to (which is not covered here).
+This is just a cosmetic problem:
+
+![Architecture](./resources/not-secure.png)
 
 ## Project Structure
 
@@ -49,8 +85,7 @@ This repository is an *aggregator* project of the following microservice reposit
 - IceCreamParlor-Processing
 - icecreamparlor-ui
 
-To run Icecream-parlor locally you only need to pull this repository
-and the build framework will handle the rest.
+To run Icecream-parlor locally you only need to pull this repository.
 
 ## Requirements
 
@@ -64,14 +99,6 @@ To run Ice-cream Parlor on your local machine, you need the following.
 Note: Docker requires virtualization support at system level. This is a configuration option in BIOS.
 Docker Desktop installation will prompt you to this.
 
-## Building
-
-The build script will pull all custom built microservices from my Github and build them into Docker images in the local Docker repository.
-
-To build the app,
-1. On Linux, run `./build-microservices`
-2. On Windows/Git Bash, run `sh build-microservices`
-
 ## Configuring
 
 ### Configuring Passwords
@@ -83,23 +110,13 @@ The passwords will be baked into the services and used to authenticate inter-ser
 2. Rename the file to `.env` ("dot env", notice the filename starts with a dot)
 3. Edit the `.env` file and fill in the blanks
 
-### SSL or not?
+## Building
 
-You can choose to use SSL or to use plain HTTP. The default is to use SSL.
+The build script will pull all custom built microservices from my Github and build them into Docker images in the local Docker repository.
 
-Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
-Your browser will call it unsafe, unless you teach it not to (which is not covered here).
-This is just a cosmetic problem:
-
-![Architecture](./resources/not-secure.png)
-
-If you want to *switch off SSL* altogether, edit this line in *docker-compose.yaml*:
-```
-nginx:
-    volumes:
-    - ./nginx/conf/nginx_ssl.conf:/etc/nginx/nginx.conf
-```
-Change the filename `nginx_ssl.conf` to `nginx.conf`. The app will now use plain HTTP in all communications.
+To build the app,
+1. On Linux, run `./build-microservices`
+2. On Windows/Git Bash, run `sh build-microservices.gitbash`
 
 ## Running and stopping
 
