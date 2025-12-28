@@ -137,4 +137,4 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 
 ## Using the App
 
-Direct your chosen browser to http://localhost.
+Direct your chosen browser to https://localhost.
