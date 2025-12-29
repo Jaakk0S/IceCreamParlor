@@ -118,7 +118,7 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 
 Direct your chosen browser to https://localhost.
 
-Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
+Because this is a locally run demo app, only a poor man's *self-signed SSL certificate* is available at the Nginx web server.
 Your browser will call it unsafe, unless you teach it not to (which is not covered here).
 This is just a cosmetic problem. You'll see something like this:
 
@@ -126,9 +126,9 @@ This is just a cosmetic problem. You'll see something like this:
 
 Also, you might get an error page and have to specifically ask your browser to let you through the first time.
 
-![User Interface](./resources/ui.png)
-
 You use the UI to create ice-cream orders.
+
+![User Interface](./resources/ui.png)
 
 On the left panel, you can start a new order. Then you can choose between tabs to add items to your order.
 
