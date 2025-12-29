@@ -57,12 +57,12 @@ There is no user management. RabbitMQ and MySQL use password authentication.
 
 This repository is an *aggregator* project of the following microservice repositories:
 - IceCreamParlor
-- IceCreamParlor-MenuService
-- IceCreamParlor-OrderService
-- IceCreamParlor-Processing
-- icecreamparlor-ui
+- [IceCreamParlor-MenuService](https://github.com/Jaakk0S/IceCreamParlor-MenuService)
+- [IceCreamParlor-OrderService](https://github.com/Jaakk0S/IceCreamParlor-OrderService)
+- [IceCreamParlor-Processing](https://github.com/Jaakk0S/IceCreamParlor-Processing)
+- [icecreamparlor-ui](https://github.com/Jaakk0S/icecreamparlor-ui)
 
-To run Icecream-parlor locally you only need to pull this repository.
+To run Icecream-parlor locally you only need to pull this repository. The build system handles the rest.
 
 In this composition, the app is set up to run locally in a single host machine.
 
