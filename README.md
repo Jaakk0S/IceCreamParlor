@@ -6,23 +6,7 @@ Ice-cream Parlor is a demo business application and a microservice technology sh
 The application is composed of a frontend and an event-based backend of containerized scalable microservices.
 The microservices are each built with different technologies.
 
-## Overview
-
 Ice-cream Parlor provides a backend and a simple UI to buy, process and deliver ice-cream.
-
-You use the UI to create ice-cream orders. You can add existing "classic" ice-cream products to your order,
-or you can create custom orders where you select the ice-cream composition. This data is served by the Menu
-service.
-
-Once you have created your order, click "Place Order". The order will be placed in the queue for placed orders.
-It will then be picked up by a preparation agent and then placed in the queue for prepared orders.
-It will then be picked up by a delivery agent and delivered. At each processing step, the order
-status is updated using the order status queue. These status updates are listened to by the Order service,
-which will update the order status in its internal database, and push the status updates to the UI.
-The UI will display the progress of each order to the user.
-
-The Menu service is serving built-in menu items from its database. The API also provides administration functions
-to add and delete menu items. There is no UI functionality to support these features.
 
 ## Technical Aspects
 
@@ -70,9 +54,12 @@ There is no user management. RabbitMQ and MySQL use password authentication.
 
 Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
 Your browser will call it unsafe, unless you teach it not to (which is not covered here).
-This is just a cosmetic problem:
+This is just a cosmetic problem. You'll see something like this:
 
 ![Architecture](./resources/not-secure.png)
+
+Also, you might get an error page and have to specifically ask your browser to let you through the first time.
+
 
 ## Project Structure
 
@@ -114,9 +101,7 @@ The passwords will be baked into the services and used to authenticate inter-ser
 
 The build script will pull all custom built microservices from my Github and build them into Docker images in the local Docker repository.
 
-To build the app,
-1. On Linux, run `./build-microservices`
-2. On Windows/Git Bash, run `sh build-microservices.gitbash`
+To build the app, run `./build-microservices`
 
 ## Running and stopping
 
@@ -140,3 +125,25 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 ## Using the App
 
 Direct your chosen browser to https://localhost.
+
+![User Interface](./resources/ui.png)
+
+You use the UI to create ice-cream orders.
+
+On the left panel, you can start a new order. Then you can choose between tabs to add items to your order.
+
+On the middle panel, you see the current order being built. You can remove items from the order by clicking
+on them. You need to enter a name in order to be able to place your order.
+Once you're happy with your order, click "Place order".
+
+On the right panel, you see existing orders and their status. Hover your mouse on them to expand their content.
+
+Once an order is created, in the backend it will be placed in the queue for placed orders.
+After a moment, it will get picked up by a preparation agent, and once it's prepared, it will be placed in the queue for prepared orders.
+It will then be picked up by a delivery agent and delivered. At each processing step, the order
+status is updated using the order status queue. These status updates are listened to by the Order service,
+which will update the order status in its internal database, and push the status updates to the UI.
+The UI will display the progress of each order to the user.
+
+The Menu service is serving built-in menu items from its database. The API also provides administration functions
+to add and delete menu items. There is no UI functionality to support these features.
