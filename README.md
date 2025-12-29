@@ -106,9 +106,9 @@ docker compose up
 ```
 
 This will run all microservices in Docker Desktop using configuration in `docker-compose.yaml`, and aggregate all log output to console.
-
 The full service composition contains the custom microservices built in the previous step, and
 some publicly available service images.
+Docker Compose will run each of these, using health checks to secure the starting order.
 
 Once the service is successfully up and running, your Docker Desktop panel should look like this,
 with all services running and port 443 open at *nginx* service.
