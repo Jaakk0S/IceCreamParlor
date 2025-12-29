@@ -110,6 +110,11 @@ This will run all microservices in Docker Desktop using configuration in `docker
 The full service composition contains the custom microservices built in the previous step, and
 some publicly available service images.
 
+Once the service is successfully up and running, your Docker Desktop panel should look like this,
+with all services running and port 443 open at *nginx* service.
+
+![Docker Desktop](./resources/docker-desktop.png)
+
 ### Stopping
 
 Go to Docker Desktop. Click on the tab "Containers". Click the stop button on the top level service "icecreamparlor".
