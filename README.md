@@ -52,14 +52,6 @@ Public access is only allowed through a HTTP(s) reverse proxy (Nginx).
 
 There is no user management. RabbitMQ and MySQL use password authentication.
 
-Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
-Your browser will call it unsafe, unless you teach it not to (which is not covered here).
-This is just a cosmetic problem. You'll see something like this:
-
-![Architecture](./resources/not-secure.png)
-
-Also, you might get an error page and have to specifically ask your browser to let you through the first time.
-
 
 ## Project Structure
 
@@ -125,6 +117,14 @@ Go to Docker Desktop. Click on the tab "Containers". Click the stop button on th
 ## Using the App
 
 Direct your chosen browser to https://localhost.
+
+Because this is a locally run demo app, only a poor man's *self-signed certificate* is available at the Nginx web server.
+Your browser will call it unsafe, unless you teach it not to (which is not covered here).
+This is just a cosmetic problem. You'll see something like this:
+
+![Architecture](./resources/not-secure.png)
+
+Also, you might get an error page and have to specifically ask your browser to let you through the first time.
 
 ![User Interface](./resources/ui.png)
 
