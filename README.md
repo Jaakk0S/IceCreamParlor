@@ -20,7 +20,8 @@ Ice-cream Parlor provides a backend and a simple UI to buy, process and deliver 
 6. Python
 7. RabbitMQ
 8. PostgreSQL
-9. Nginx
+9. H2
+10. Nginx
 
 ### Architecture
 
